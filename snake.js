@@ -15,7 +15,7 @@
 
 
 let color = "green"; // On prendra l'input pour la couleur
-let speed = 1;       // et la vitesse
+let speed = 10;      // et la vitesse
 let xDirection;      // -1 vers la gauche, 1 vers la droite, 0 pour aucun
 let yDirection;      // -1 vers le haut, 1 vers le bas, 0 pour aucun
 
@@ -37,11 +37,14 @@ let snake = [
     {x: x - cellSize * 2, y: y, xDir: xDirection, yDir: yDirection}
 ];
 
-// console.log(snake);
+let score = 0;
 
-// Ajouter un statut de case remplie pour éviter d'ajouter un fruit
-// sur le serpent
+console.log(snake);
+
+
 // Fruit placé aléatoirement
+
+
 
 // Quand on mange un fruit push un objet dans snake[]
 // avec array.push()
@@ -53,28 +56,58 @@ const tail = snake[snake.length - 1];
 
 // console.log(head);
 
+let xPos = [];
+let yPos = [];
+let fruit;
 
 function draw() {
     if (canvas.getContext) {
         ctx.clearRect(0, 0, width, height);
+        
 
+        if (!fruit) {
+            for (let i = 0; i < width; i += cellSize) {
+                xPos.push(i);
+                yPos.push(i);
+            }
+            // console.log(xPos);
+            const xRand = Math.round(Math.random() * xPos.length);
+            const yRand = Math.round(Math.random() * yPos.length);
+            
+            fruit = {x: xPos[xRand - 1], y: yPos[yRand - 1]};
+            // console.log(fruit);
+
+            
+        } else {
+            ctx.fillStyle = "yellow";
+            ctx.fillRect(fruit.x, fruit.y, cellSize, cellSize);
+            if (head.x == fruit.x && head.y == fruit.y) {
+                ctx.clearRect(fruit.x, fruit.y, cellSize, cellSize);
+                fruit = null;
+                snake.push({})
+                score++;
+                // console.log(score);
+
+            }
+        }
+
+        
         if (tile) {
             ctx.fillStyle = "red";
             ctx.fillRect(tile.x, tile.y, cellSize, cellSize);
+            
             // console.log(tile);
             for (let i = 1; i < snake.length; i++) {
                 if (snake[i].x == tile.x && snake[i].y == tile.y) {
                     snake[i].xDir = tile.xDir;
                     snake[i].yDir = tile.yDir;
                 }
-
-
-            }
-            
+            }  
         }
 
         head.x += cellSize * head.xDir;
         head.y += cellSize * head.yDir;
+
 
         for (let i = 1; i < snake.length; i++) {
             
@@ -121,7 +154,8 @@ function draw() {
 
             
         }
-
+        ctx.font = "20px serif";
+        ctx.fillText(`Score: ${score}`, 10, 50);
         
         setTimeout(draw, 1000 / speed);
     }
