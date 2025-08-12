@@ -15,7 +15,7 @@
 
 
 let color = "green"; // On prendra l'input pour la couleur
-let speed = 10;      // et la vitesse
+let speed = 7;      // et la vitesse
 let xDirection;      // -1 vers la gauche, 1 vers la droite, 0 pour aucun
 let yDirection;      // -1 vers le haut, 1 vers le bas, 0 pour aucun
 
@@ -42,12 +42,10 @@ let score = 0;
 console.log(snake);
 
 
-// Fruit placé aléatoirement
 
 
 
-// Quand on mange un fruit push un objet dans snake[]
-// avec array.push()
+
 
 
 const head = snake[0];
@@ -75,16 +73,29 @@ function draw() {
             const yRand = Math.round(Math.random() * yPos.length);
             
             fruit = {x: xPos[xRand - 1], y: yPos[yRand - 1]};
-            // console.log(fruit);
+            console.log(fruit);
 
             
         } else {
+            // Fruit placé aléatoirement
+
             ctx.fillStyle = "yellow";
             ctx.fillRect(fruit.x, fruit.y, cellSize, cellSize);
             if (head.x == fruit.x && head.y == fruit.y) {
                 ctx.clearRect(fruit.x, fruit.y, cellSize, cellSize);
                 fruit = null;
-                snake.push({})
+                // Quand on mange un fruit push un objet dans snake[]
+                // avec array.push()
+                if (snake[snake.length - 1].xDir == 0 && snake[snake.length - 1].yDir == 1) {
+                    snake.push({x: snake[snake.length - 1].x, y: snake[snake.length - 1].y - cellSize, xDir: snake[snake.length - 1].xDir, yDir: snake[snake.length - 1].yDir});
+                } else if (snake[snake.length - 1].xDir == 0 && snake[snake.length - 1].yDir == -1) {
+                    snake.push({x: snake[snake.length - 1].x, y: snake[snake.length - 1].y + cellSize, xDir: snake[snake.length - 1].xDir, yDir: snake[snake.length - 1].yDir});
+                } else if (snake[snake.length - 1].xDir == 1 && snake[snake.length - 1].yDir == 0) {
+                    snake.push({x: snake[snake.length - 1].x - cellSize, y: snake[snake.length - 1].y, xDir: snake[snake.length - 1].xDir, yDir: snake[snake.length - 1].yDir});
+                } else if (snake[snake.length - 1].xDir == -1 && snake[snake.length - 1].yDir == 0) {
+                    snake.push({x: snake[snake.length - 1].x + cellSize, y: snake[snake.length - 1].y, xDir: snake[snake.length - 1].xDir, yDir: snake[snake.length - 1].yDir});
+                }
+                console.log(snake);
                 score++;
                 // console.log(score);
 
