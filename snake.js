@@ -16,37 +16,26 @@
 
 let color = "green"; // On prendra l'input pour la couleur
 let speed = 7;      // et la vitesse
-let xDirection;      // -1 vers la gauche, 1 vers la droite, 0 pour aucun
-let yDirection;      // -1 vers le haut, 1 vers le bas, 0 pour aucun
+let xDirection = 1;      // -1 vers la gauche, 1 vers la droite, 0 pour aucun
+let yDirection = 0;      // -1 vers le haut, 1 vers le bas, 0 pour aucun
 
 const cellSize = 20;
 let x = cellSize * 5;
 let y = cellSize * 5;
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-let tile;
 const width = canvas.width = 400;
 const height = canvas.height = 400;
 
-xDirection = 1;
-yDirection = 0;
-
 let snake = [
     {x: x, y: y, xDir: xDirection, yDir: yDirection},
-    {x: x - cellSize, y: y, xDir: xDirection, yDir: yDirection},
-    {x: x - cellSize * 2, y: y, xDir: xDirection, yDir: yDirection}
+    {x: x - cellSize, y: y},
+    {x: x - cellSize * 2, y: y}
 ];
 
 let score = 0;
 
 console.log(snake);
-
-
-
-
-
-
-
 
 const head = snake[0];
 const tail = snake[snake.length - 1];
@@ -57,23 +46,35 @@ const tail = snake[snake.length - 1];
 let xPos = [];
 let yPos = [];
 let fruit;
+let availableKey;
 
 function draw() {
     if (canvas.getContext) {
         ctx.clearRect(0, 0, width, height);
         
+        const head = snake[0];
+        const tail = snake[snake.length - 1];
+        availableKey = 1;
+
+        oldPositions = [];
+
+        snake.forEach(part => {
+            oldPositions.push({x: part.x, y: part.y})
+        });
 
         if (!fruit) {
             for (let i = 0; i < width; i += cellSize) {
                 xPos.push(i);
                 yPos.push(i);
             }
-            // console.log(xPos);
-            const xRand = Math.round(Math.random() * xPos.length);
-            const yRand = Math.round(Math.random() * yPos.length);
+            // console.log(xPos, yPos);
+            const xRand = Math.round(Math.random() * (xPos.length - 1));
+            const yRand = Math.round(Math.random() * (yPos.length - 1));
+            // console.log(xRand, yRand);
             
-            fruit = {x: xPos[xRand - 1], y: yPos[yRand - 1]};
-            console.log(fruit);
+            
+            fruit = {x: xPos[xRand], y: yPos[yRand]};
+            // console.log(fruit);
 
             
         } else {
@@ -82,19 +83,9 @@ function draw() {
             ctx.fillStyle = "yellow";
             ctx.fillRect(fruit.x, fruit.y, cellSize, cellSize);
             if (head.x == fruit.x && head.y == fruit.y) {
-                ctx.clearRect(fruit.x, fruit.y, cellSize, cellSize);
+                // ctx.clearRect(fruit.x, fruit.y, cellSize, cellSize);
                 fruit = null;
-                // Quand on mange un fruit push un objet dans snake[]
-                // avec array.push()
-                if (snake[snake.length - 1].xDir == 0 && snake[snake.length - 1].yDir == 1) {
-                    snake.push({x: snake[snake.length - 1].x, y: snake[snake.length - 1].y - cellSize, xDir: snake[snake.length - 1].xDir, yDir: snake[snake.length - 1].yDir});
-                } else if (snake[snake.length - 1].xDir == 0 && snake[snake.length - 1].yDir == -1) {
-                    snake.push({x: snake[snake.length - 1].x, y: snake[snake.length - 1].y + cellSize, xDir: snake[snake.length - 1].xDir, yDir: snake[snake.length - 1].yDir});
-                } else if (snake[snake.length - 1].xDir == 1 && snake[snake.length - 1].yDir == 0) {
-                    snake.push({x: snake[snake.length - 1].x - cellSize, y: snake[snake.length - 1].y, xDir: snake[snake.length - 1].xDir, yDir: snake[snake.length - 1].yDir});
-                } else if (snake[snake.length - 1].xDir == -1 && snake[snake.length - 1].yDir == 0) {
-                    snake.push({x: snake[snake.length - 1].x + cellSize, y: snake[snake.length - 1].y, xDir: snake[snake.length - 1].xDir, yDir: snake[snake.length - 1].yDir});
-                }
+                snake.push({x: tail.x, y: tail.y - cellSize});
                 console.log(snake);
                 score++;
                 // console.log(score);
@@ -102,46 +93,19 @@ function draw() {
             }
         }
 
-        
-        if (tile) {
-            ctx.fillStyle = "red";
-            ctx.fillRect(tile.x, tile.y, cellSize, cellSize);
-            
-            // console.log(tile);
-            for (let i = 1; i < snake.length; i++) {
-                if (snake[i].x == tile.x && snake[i].y == tile.y) {
-                    snake[i].xDir = tile.xDir;
-                    snake[i].yDir = tile.yDir;
-                }
-            }  
-        }
 
         head.x += cellSize * head.xDir;
         head.y += cellSize * head.yDir;
 
 
         for (let i = 1; i < snake.length; i++) {
-            
-            snake[i].x += cellSize * snake[i].xDir;
-            snake[i].y += cellSize * snake[i].yDir;
+            snake[i].x = oldPositions[i - 1].x;
+            snake[i].y = oldPositions[i - 1].y;
         }
 
 
         for (let i = 0; i < snake.length; i++) {
             
-
-
-
-            // console.log(snake[i].x);
-            
-
-
-
-
-
-
-
-
             // loop horizontal
             if (snake[i].x >= width) {
                 snake[i].x = 0;
@@ -178,40 +142,35 @@ draw();
 
 
 window.addEventListener("keydown", (key) => {
-    if (yDirection == 0 ) {
-        if (key.code === "ArrowDown") {
-            xDirection = 0;
-            yDirection = 1;
-            head.xDir = xDirection;
-            head.yDir = yDirection;
-            tile = {x: head.x, y: head.y, xDir: xDirection, yDir: yDirection};
+    if (availableKey == 1) {
+        if (head.yDir == 0 ) {
+            if (key.code === "ArrowDown") {
+                head.xDir = 0;
+                head.yDir = 1;
+                availableKey = 0;
+            }
+            
+            if (key.code === "ArrowUp") {
+                head.xDir = 0;
+                head.yDir = -1;
+                availableKey = 0;
+            }
         }
-        
-        if (key.code === "ArrowUp") {
-            xDirection = 0;
-            yDirection = -1;
-            head.xDir = xDirection;
-            head.yDir = yDirection;
-            tile = {x: head.x, y: head.y, xDir: xDirection, yDir: yDirection};
-        }
-    }
 
-    if (xDirection == 0 ) {
-        if (key.code === "ArrowRight") {
-            xDirection = 1;
-            yDirection = 0;
-            head.xDir = xDirection;
-            head.yDir = yDirection;
-            tile = {x: head.x, y: head.y, xDir: xDirection, yDir: yDirection};
+        if (head.xDir == 0 ) {
+            if (key.code === "ArrowRight") {
+                head.xDir = 1;
+                head.yDir = 0;
+                availableKey = 0;
+            }
+            
+            if (key.code === "ArrowLeft") {
+                head.xDir = -1;
+                head.yDir = 0;
+                availableKey = 0;
+            }
         }
-        
-        if (key.code === "ArrowLeft") {
-            xDirection = -1;
-            yDirection = 0;
-            head.xDir = xDirection;
-            head.yDir = yDirection;
-            tile = {x: head.x, y: head.y, xDir: xDirection, yDir: yDirection};            
-        }
+
     }
 
 })
