@@ -63,20 +63,24 @@ function draw() {
         });
 
         if (!fruit) {
-            for (let i = 0; i < width; i += cellSize) {
-                xPos.push(i);
-                yPos.push(i);
-            }
-            // console.log(xPos, yPos);
-            const xRand = Math.round(Math.random() * (xPos.length - 1));
-            const yRand = Math.round(Math.random() * (yPos.length - 1));
-            // console.log(xRand, yRand);
-            
-            
-            fruit = {x: xPos[xRand], y: yPos[yRand]};
-            // console.log(fruit);
+            let valid = false;
 
-            
+            while (!valid) {
+                const xRand = Math.round(Math.random() * (width / cellSize - 1)) * cellSize;
+                const yRand = Math.round(Math.random() * (height / cellSize - 1)) * cellSize;
+                let overlap = 0;
+                snake.forEach(part => {
+                if (part.x == xPos[xRand] && part.y == yPos[yRand]) {
+                    overlap ++;
+                }
+
+                if (overlap === 0) {
+                    fruit = {x: xRand, y: yRand};
+                    valid = true;
+                }
+            })
+            }
+
         } else {
             // Fruit placé aléatoirement
 
