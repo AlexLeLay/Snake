@@ -8,8 +8,41 @@
 </head>
 <body>
     <main>
-        <h1>Jeu Snake</h1>
-        <canvas width="400" height="400"></canvas>
+        <h1>Snake</h1>
+        <div id="menu">
+            <div>
+                <ul>
+                    <li><button id="start">Jouer</button></li>
+                    <li><button id="scores">Voir scores</button></li>
+                </ul>
+            </div>
+            <div>
+                <form action="">
+                    <label for="speed">Vitesse: <span id="speed-nbr"></span></label>
+                    <input name="speed" id="speed" value="5" type="range" min="1" max="30">
+                </form>
+                <form class="flex" action="">
+                    <label>Couleur: </label>
+                    <div class="flex">
+                        <input type="radio" name="color" data-color="#F00000" value="red" id="red">
+                        <label for="red" class="color-box red"></label>
+                        <input type="radio" name="color" data-color="#FF8000" value="orange" id="orange">
+                        <label for="orange" class="color-box orange"></label>
+                        <input type="radio" name="color" data-color="#FFFF00" value="yellow" id="yellow">
+                        <label for="yellow" class="color-box yellow"></label>
+                        <input type="radio" name="color" data-color="#007940" value="green" id="green" checked>
+                        <label for="green" class="color-box green"></label>
+                        <input type="radio" name="color" data-color="#4040FF" value="blue" id="blue">
+                        <label for="blue" class="color-box blue"></label>
+                        <input type="radio" name="color" data-color="#A000C0" value="purple" id="purple">
+                        <label for="purple" class="color-box purple"></label>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="game">
+            <canvas width="400" height="400"></canvas>
+        </div>
     </main>
 <script src="snake.js"></script>
 </body>

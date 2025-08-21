@@ -14,8 +14,8 @@
 // ou limiter à 1 input par frame
 
 
-let color = "green"; // On prendra l'input pour la couleur
-let speed = 7;      // et la vitesse
+let color;  // On prendra l'input pour la couleur
+let speed;  // et la vitesse
 let xDirection = 1;      // -1 vers la gauche, 1 vers la droite, 0 pour aucun
 let yDirection = 0;      // -1 vers le haut, 1 vers le bas, 0 pour aucun
 
@@ -134,13 +134,56 @@ function draw() {
             
         }
         ctx.font = "20px serif";
-        ctx.fillText(`Score: ${score}`, 10, 50);
+        ctx.fillText(`Score: ${(score * (speed/5)).toFixed(0)}`, 10, 50);
+        
+        console.log(speed);
         
         setTimeout(draw, 1000 / speed);
     }
 }
 
-draw();
+let isRunning = 0;
+let isGameOver = 0;
+const game = document.getElementById("game");
+let speedInput = document.getElementById("speed");
+let speedNbr = document.getElementById("speed-nbr");
+
+const menu = document.getElementById("menu");
+const start = document.getElementById("start");
+const scores = document.getElementById("scores");
+
+
+
+speed = speedInput.value ;
+
+speedNbr.innerHTML = speed;
+
+speedInput.addEventListener("input", (e) => {
+    speed = Number(e.target.value);
+    speedNbr.innerHTML = speed;
+})
+
+const colors = document.querySelectorAll("input[name='color']");
+
+colors.forEach(radio => {
+    radio.addEventListener("change", () => {
+        if (radio.checked) {
+            color = radio.dataset.color;         
+        }
+    });
+});
+
+start.addEventListener("click", () => {
+    isRunning = 1;
+    console.log(isRunning);
+    menu.style.display = "none";
+    game.style.display = "block";
+    draw();
+})
+
+if (isRunning != 1) {
+    game.style.display = "none";
+}
 
 // Directions
 
